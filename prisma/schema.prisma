@@ -1,0 +1,129 @@
+// Kyosys website data model — Architecture §6
+// v1: single shared Admin row (seeded). No roles (PRD §9.5).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum LeadStatus {
+  NEW
+  READ
+  REPLIED
+  CLOSED
+}
+
+model Admin {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String // bcrypt, cost 12
+  createdAt    DateTime @default(now())
+}
+
+model Category {
+  id    String @id @default(cuid())
+  name  String @unique
+  slug  String @unique
+  posts Post[]
+}
+
+model Post {
+  id             String     @id @default(cuid())
+  title          String
+  slug           String     @unique
+  excerpt        String // ≤ 160 chars — cards + meta description fallback
+  content        Json // TipTap JSON document
+  coverImage     String? // Vercel Blob URL
+  categoryId     String
+  category       Category   @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  status         PostStatus @default(DRAFT)
+  publishedAt    DateTime?
+  seoTitle       String?
+  seoDescription String?
+  authorName     String? // Display name for the byline + Person schema (E-E-A-T)
+  authorBio      String? // One-line author bio shown under the byline
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  @@index([status, publishedAt])
+}
+
+model ContactSubmission {
+  id        String     @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  company   String?
+  service   String // one of the 5 services or "Other"
+  budget    String // budget band select
+  message   String
+  status    LeadStatus @default(NEW)
+  consent   Boolean    @default(false) // DPDP consent recorded at submit time
+  createdAt DateTime   @default(now())
+
+  @@index([status, createdAt])
+}
+
+model QuoteRequest {
+  id          String     @id @default(cuid())
+  name        String
+  email       String
+  phone       String?
+  service     String
+  features    Json // selected feature keys
+  scale       String // e.g. page count / screen count band
+  timeline    String // standard | fast | urgent
+  estimateMin Int // ₹
+  estimateMax Int // ₹
+  status      LeadStatus @default(NEW)
+  consent     Boolean    @default(false) // DPDP consent recorded at submit time
+  createdAt   DateTime   @default(now())
+
+  @@index([status, createdAt])
+}
+
+model Testimonial {
+  id        String   @id @default(cuid())
+  name      String
+  role      String
+  company   String?
+  quote     String
+  avatarUrl String?
+  rating    Int      @default(5) // 1..5
+  featured  Boolean  @default(false)
+  // HONESTY RULE: seed/placeholder testimonials are sample=true and are NEVER
+  // shown on public surfaces. Public pages show only approved=true AND sample=false.
+  sample    Boolean  @default(false)
+  approved  Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model CaseStudy {
+  id             String     @id @default(cuid())
+  title          String
+  slug           String     @unique
+  client         String? // real client name only — null until a real project ships
+  industry       String?
+  services       String[] // service slugs, e.g. ["web-development", "seo"]
+  excerpt        String // ≤ 160 chars — cards + meta description fallback
+  content        Json // TipTap JSON document
+  coverImage     String? // Vercel Blob URL
+  results        Json? // [{ metric: string, value: string }] — real numbers only
+  status         PostStatus @default(DRAFT)
+  publishedAt    DateTime?
+  seoTitle       String?
+  seoDescription String?
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  @@index([status, publishedAt])
+}

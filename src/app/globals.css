@@ -1,0 +1,668 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  color: theme("colors.ink");
+  background: theme("colors.paper");
+  font-family: theme("fontFamily.sans");
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: theme("colors.brand.500");
+  color: #ffffff;
+}
+
+/* ── Print grain: subtle paper texture, fixed over everything ─────────── */
+.grain-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+}
+
+/* ── Scroll reveal (IntersectionObserver adds .is-visible) ────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.7s ease-out,
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Sun marker highlight — skewed hand-drawn feel behind words ───────── */
+.marker {
+  background-image: linear-gradient(
+    104deg,
+    transparent 0.5%,
+    theme("colors.sun.300") 4%,
+    theme("colors.sun.400") 96%,
+    transparent 99.5%
+  );
+  background-repeat: no-repeat;
+  padding: 0 0.12em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+/* ── Animated text-link underline ──────────────────────────────────────── */
+.link-underline {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 2px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  padding-bottom: 2px;
+}
+.link-underline:hover,
+a:hover > .link-underline {
+  background-size: 100% 2px;
+}
+
+/* ── Editorial drop cap for long-form openers ──────────────────────────── */
+.dropcap::first-letter {
+  font-family: theme("fontFamily.display");
+  font-weight: 800;
+  font-size: 3.4em;
+  line-height: 0.85;
+  float: left;
+  margin: 0.06em 0.14em 0 0;
+  color: theme("colors.brand.900");
+}
+
+/* ── Outlined display type for visual bands ───────────────────────────── */
+.text-outline-paper {
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgb(255 255 255 / 0.28);
+}
+@supports not (-webkit-text-stroke: 1px black) {
+  .text-outline-paper {
+    color: rgb(255 255 255 / 0.14);
+  }
+}
+
+/* ── Refined focus rings ───────────────────────────────────────────────── */
+:where(a, button, summary, input, textarea, select):focus-visible {
+  outline: 2px solid theme("colors.brand.500");
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* ── Gradient art direction (tasteful, brand tokens only) ─────────────── */
+
+/* Immersive dark sections — deep diagonal blue + violet accent + vignette.
+   Indigo/violet = technical sophistication (spec role 3). */
+.bg-dark-gradient {
+  background-image:
+    radial-gradient(120% 90% at 85% 10%, rgb(37 99 235 / 0.22) 0%, transparent 55%),
+    radial-gradient(90% 70% at 12% 88%, rgb(124 58 237 / 0.14) 0%, transparent 60%),
+    linear-gradient(
+      135deg,
+      theme("colors.brand.950") 0%,
+      theme("colors.brand.800") 52%,
+      theme("colors.brand.950") 100%
+    );
+}
+
+/* Primary CTA — LIGHT sections: inverted slate (Palette 3).
+   #0F172A bg + white text (17.85:1), hover #1E293B. Reserved strictly for
+   conversion goals ("Get a Quote"). Identical shape to .btn-emerald so the
+   action reads as one across light/dark contexts. */
+.btn-sun {
+  position: relative;
+  overflow: hidden;
+  background-color: theme("colors.ink");
+  color: #ffffff;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.12),
+    0 1px 2px rgb(15 23 42 / 0.25);
+  transition:
+    background-color 0.3s ease,
+    filter 0.3s ease,
+    box-shadow 0.3s ease;
+}
+/* Sheen sweep on hover — light band glides left → right */
+.btn-sun::after,
+.btn-emerald::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    105deg,
+    transparent 42%,
+    rgb(255 255 255 / 0.35) 50%,
+    transparent 58%
+  );
+  transform: translateX(-130%);
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.btn-sun:hover::after,
+.btn-emerald:hover::after {
+  transform: translateX(130%);
+}
+.btn-sun:hover {
+  background-color: #1e293b;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.12),
+    0 12px 32px rgb(15 23 42 / 0.35);
+}
+
+/* Primary CTA — DARK sections: emerald (Palette 1, growth/ROI emotion).
+   #10B981 bg + #0B0F19 text = 7.55:1. (Spec's white text fails at 2.54:1,
+   so dark text is used deliberately — same bright-button/dark-text
+   language the site used before.) Hover: brightness lift + emerald glow. */
+.btn-emerald {
+  position: relative;
+  overflow: hidden;
+  background-color: theme("colors.emerald.500");
+  color: theme("colors.brand.950");
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.25),
+    0 1px 2px rgb(11 15 25 / 0.3);
+  transition:
+    filter 0.3s ease,
+    box-shadow 0.3s ease;
+}
+.btn-emerald:hover {
+  filter: brightness(1.07);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.25),
+    0 12px 32px rgb(16 185 129 / 0.45);
+}
+
+/* Marquee ticker — subtle vertical sheen */
+.marquee-band {
+  background-image: linear-gradient(
+    180deg,
+    theme("colors.sun.300") 0%,
+    theme("colors.sun.400") 55%,
+    theme("colors.sun.300") 100%
+  );
+}
+
+/* Gradient hairline — soft transition where paper meets dark */
+.hairline-glow {
+  height: 1px;
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgb(245 158 11 / 0.45) 50%,
+    transparent 100%
+  );
+}
+
+/* Italic serif accent words — gradient text.
+   Light context: brand-700 → brand-950 (contrast on paper: 7+:1).
+   Dark context:  sun-300 → sun-500 (contrast on brand-950: 11+:1). */
+h1 em.font-serif,
+h2 em.font-serif,
+footer a em.font-serif {
+  background-image: linear-gradient(
+    115deg,
+    theme("colors.brand.700") 10%,
+    theme("colors.brand.950") 90%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.bg-dark-gradient em.font-serif,
+.bg-brand-950 em.font-serif {
+  background-image: linear-gradient(
+    115deg,
+    theme("colors.sun.300") 10%,
+    theme("colors.sun.500") 90%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+@supports not ((background-clip: text) or (-webkit-background-clip: text)) {
+  h1 em.font-serif,
+  h2 em.font-serif,
+  footer a em.font-serif,
+  .bg-dark-gradient em.font-serif,
+  .bg-brand-950 em.font-serif {
+    background-image: none;
+    color: inherit;
+  }
+}
+
+/* Cursor glow — soft indigo radial bloom trailing the pointer in dark zones
+   (indigo = technical sophistication per the color spec). */
+.cursor-glow {
+  background: radial-gradient(
+    circle,
+    rgb(99 102 241 / 0.38) 0%,
+    rgb(99 102 241 / 0.12) 42%,
+    transparent 68%
+  );
+}
+
+/* ── Hover-anywhere system ───────────────────────────────────────────── */
+
+/* Service index rows — gradient fill sweeps left → right on hover,
+   replacing the flat hover bg (text inversion stays via group-hover) */
+.service-row {
+  position: relative;
+  isolation: isolate;
+}
+.service-row::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image: linear-gradient(
+    100deg,
+    theme("colors.brand.950") 0%,
+    theme("colors.brand.800") 100%
+  );
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.service-row:hover::before {
+  transform: scaleX(1);
+}
+
+/* Testimonial quotes — barely-there lift on hover, no layout shift */
+.t-quote {
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.t-quote:hover {
+  transform: translateY(-3px);
+}
+
+/* Custom cursor (see Cursor.tsx) — native cursor hidden everywhere
+   EXCEPT form fields, which keep `cursor: auto` for usability. */
+.has-custom-cursor body,
+.has-custom-cursor a,
+.has-custom-cursor button,
+.has-custom-cursor [data-hover],
+.has-custom-cursor [role="button"] {
+  cursor: none;
+}
+.has-custom-cursor input,
+.has-custom-cursor textarea,
+.has-custom-cursor select,
+.has-custom-cursor [contenteditable="true"] {
+  cursor: auto;
+}
+
+/* Global warm cursor aura — faint radial bloom trailing the pointer */
+.cursor-aura {
+  width: 520px;
+  height: 520px;
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle,
+    rgb(245 158 11 / 0.55) 0%,
+    rgb(245 158 11 / 0.18) 40%,
+    transparent 68%
+  );
+}
+
+/* ── Motion system — transform & opacity only, GPU-composited ─────────── */
+
+/* Hero intro choreography (mount-triggered; .intro-run added via rAF) */
+.intro-mask {
+  display: block;
+  overflow: hidden;
+  /* Descender clearance: glyphs like "g" extend below the tight 0.95
+     line box; the padding keeps them visible while the negative margin
+     preserves the exact vertical rhythm. */
+  padding-bottom: 0.1em;
+  margin-bottom: -0.1em;
+}
+.intro-mask-inner {
+  display: block;
+  transform: translateY(115%);
+  will-change: transform;
+}
+.intro-fade {
+  opacity: 0;
+  transform: translateY(var(--intro-y, 16px));
+  will-change: opacity, transform;
+}
+.intro-run .intro-mask-inner {
+  animation: intro-line-rise 0.95s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: var(--intro-delay, 0ms);
+}
+.intro-run .intro-fade {
+  animation: intro-fade-up 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: var(--intro-delay, 0ms);
+}
+@keyframes intro-line-rise {
+  to {
+    transform: translateY(0);
+  }
+}
+@keyframes intro-fade-up {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Reveal mask variant — IO-triggered headline line reveals */
+.reveal-mask {
+  overflow: hidden;
+  padding-bottom: 0.1em;
+  margin-bottom: -0.1em;
+}
+.reveal-mask-inner {
+  display: block;
+  transform: translateY(115%);
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: transform;
+}
+.reveal-mask.is-visible .reveal-mask-inner {
+  transform: translateY(0);
+}
+
+/* ── Cinematic video hero: legibility scrims ─────────────────────────── */
+
+/* Layered scrims over the hero video — strongest where the type sits
+   (left), top melt for the solid navbar, bottom melt into the band
+   below. Tuned so paper type stays ≥ 4.5:1 even on the brightest
+   gold-streak frames. */
+.hero-video-scrim {
+  background-image:
+    linear-gradient(
+      180deg,
+      rgb(11 15 25 / 0.78) 0%,
+      transparent 24%
+    ),
+    linear-gradient(
+      100deg,
+      rgb(11 15 25 / 0.95) 0%,
+      rgb(11 15 25 / 0.82) 36%,
+      rgb(11 15 25 / 0.45) 60%,
+      rgb(11 15 25 / 0.12) 82%,
+      rgb(11 15 25 / 0.28) 100%
+    ),
+    linear-gradient(
+      0deg,
+      theme("colors.brand.950") 0%,
+      transparent 22%
+    );
+}
+
+/* Scroll cue — light variant for the dark video hero */
+.scroll-cue-light {
+  background: rgb(255 255 255 / 0.22);
+}
+.scroll-cue-light::after {
+  background: theme("colors.sun.400");
+}
+
+/* Kinetic headline slot — vertical word roll, transform-only */
+.rotator {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  height: 1.18em;
+}
+.rotator-track {
+  display: block;
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+.rotator-word {
+  display: block;
+  height: 1.18em;
+  line-height: 1.18;
+  white-space: nowrap;
+}
+
+/* Animated scroll cue — thin line, traveling dot */
+.scroll-cue {
+  position: relative;
+  display: block;
+  width: 1px;
+  height: 54px;
+  overflow: hidden;
+  background: rgb(15 23 42 / 0.16);
+}
+.scroll-cue::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: -45%;
+  width: 1px;
+  height: 45%;
+  background: theme("colors.brand.700");
+}
+@media (prefers-reduced-motion: no-preference) {
+  .scroll-cue::after {
+    animation: scroll-cue-travel 2.2s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+  }
+}
+@keyframes scroll-cue-travel {
+  0% {
+    top: -45%;
+  }
+  65%,
+  100% {
+    top: 110%;
+  }
+}
+
+/* ── Respect reduced motion ────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .reveal-mask-inner {
+    transform: none;
+    transition: none;
+  }
+  .rotator-track {
+    transition: none;
+  }
+  .intro-mask-inner {
+    transform: none;
+  }
+  .intro-fade {
+    opacity: 1;
+    transform: none;
+  }
+  .intro-run .intro-mask-inner,
+  .intro-run .intro-fade {
+    animation: none;
+  }
+  .animate-marquee,
+  .animate-aurora,
+  .animate-progress {
+    animation: none;
+  }
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ── PageHero variants: paper melt + per-page tone ─────────────────────── */
+
+/* Bottom melt into light (paper) content instead of the dark band.
+   Top + left scrims are identical to .hero-video-scrim so paper type
+   stays ≥ 4.5:1 even on the brightest gold-streak frames. */
+.hero-video-scrim--paper {
+  background-image:
+    linear-gradient(
+      180deg,
+      rgb(11 15 25 / 0.78) 0%,
+      transparent 24%
+    ),
+    linear-gradient(
+      100deg,
+      rgb(11 15 25 / 0.95) 0%,
+      rgb(11 15 25 / 0.82) 36%,
+      rgb(11 15 25 / 0.45) 60%,
+      rgb(11 15 25 / 0.12) 82%,
+      rgb(11 15 25 / 0.28) 100%
+    ),
+    linear-gradient(
+      0deg,
+      theme("colors.paper") 0%,
+      transparent 26%
+    );
+}
+
+/* Per-page tone — a subtle decorative wash over the video, layered
+   UNDER the legibility scrims so contrast is never affected. */
+.hero-tone {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.hero-tone-sun {
+  background-image: radial-gradient(
+    58% 46% at 76% 70%,
+    rgb(234 88 12 / 0.12),
+    transparent 70%
+  );
+}
+.hero-tone-mist {
+  background-image: radial-gradient(
+    52% 42% at 72% 28%,
+    rgb(255 255 255 / 0.07),
+    transparent 70%
+  );
+}
+
+/* Sweep-fill hover for rows on dark sections (deliverables, values) —
+   light gradient wash sweeps left → right. transform-only. */
+.row-sweep-dark {
+  position: relative;
+  isolation: isolate;
+}
+.row-sweep-dark::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image: linear-gradient(
+    100deg,
+    rgb(255 255 255 / 0.07) 0%,
+    rgb(255 255 255 / 0.02) 100%
+  );
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.row-sweep-dark:hover::before {
+  transform: scaleX(1);
+}
+
+/* ── Light-section gradient washes ───────────────────────────────────────
+   Tasteful dark + light enrichment for flat paper sections: faint sun
+   radial washes and deep-green diagonal washes, brand tokens only.
+   Static gradients — no motion, reduced-motion safe. Content keeps its
+   paper/ink colors, so contrast is unaffected. */
+
+.wash-sun {
+  background-image:
+    radial-gradient(46% 60% at 10% 4%, rgb(234 88 12 / 0.1), transparent 70%),
+    radial-gradient(42% 54% at 94% 98%, rgb(37 99 235 / 0.08), transparent 70%);
+}
+
+.wash-green {
+  background-image:
+    radial-gradient(58% 62% at 90% 6%, rgb(37 99 235 / 0.09), transparent 70%),
+    radial-gradient(44% 50% at 4% 96%, rgb(234 88 12 / 0.07), transparent 70%);
+}
+
+/* Gradient hairlines between light index rows — scoped via .grad-rows so
+   the homepage index is untouched. border-image replaces the flat hairline
+   on rows (border-t) and the wrapper (border-b). */
+.grad-rows,
+.grad-rows .service-row {
+  border-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgb(11 15 25 / 0.14) 14%,
+    rgb(234 88 12 / 0.45) 50%,
+    rgb(11 15 25 / 0.14) 86%,
+    transparent 100%
+  ) 1;
+}
+
+/* ── Admin TipTap editor content styles ───────────────────────────────── */
+.tiptap-content { font-size: 0.95rem; line-height: 1.7; color: #262626; }
+.tiptap-content > *:first-child { margin-top: 0; }
+.tiptap-content > *:last-child { margin-bottom: 0; }
+.tiptap-content h1 { font-size: 1.6rem; font-weight: 700; margin: 1.2em 0 0.5em; }
+.tiptap-content h2 { font-size: 1.35rem; font-weight: 700; margin: 1.1em 0 0.5em; }
+.tiptap-content h3 { font-size: 1.15rem; font-weight: 600; margin: 1em 0 0.4em; }
+.tiptap-content p { margin: 0.7em 0; }
+.tiptap-content ul, .tiptap-content ol { margin: 0.7em 0; padding-left: 1.6em; }
+.tiptap-content ul { list-style: disc; }
+.tiptap-content ol { list-style: decimal; }
+.tiptap-content li > p { margin: 0.25em 0; }
+.tiptap-content blockquote { border-left: 3px solid #d4d4d4; padding-left: 1em; margin: 1em 0; color: #525252; font-style: italic; }
+.tiptap-content pre { background: #171717; color: #f5f5f5; border-radius: 0.5rem; padding: 0.9em 1.1em; margin: 1em 0; overflow-x: auto; font-size: 0.85rem; }
+.tiptap-content pre code { background: none; padding: 0; color: inherit; }
+.tiptap-content code { background: #f5f5f5; border-radius: 0.25rem; padding: 0.1em 0.35em; font-size: 0.88em; }
+.tiptap-content a { color: #1d4ed8; text-decoration: underline; }
+.tiptap-content img { max-width: 100%; height: auto; border-radius: 0.5rem; margin: 1em 0; }
+.tiptap-content img.ProseMirror-selectednode { outline: 2px solid #1d4ed8; }
+.tiptap-content p.is-editor-empty:first-child::before { content: attr(data-placeholder); color: #a3a3a3; float: left; height: 0; pointer-events: none; }
+
+/* ── Cookie consent banner ─────────────────────────────────────────────── */
+@media (prefers-reduced-motion: no-preference) {
+  .cookie-banner {
+    animation: cookie-rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+}
+@keyframes cookie-rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Announcement bar message rotation — disabled under reduced motion. */
+@keyframes announcement-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.announcement-message {
+  animation: announcement-in 0.45s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .announcement-message {
+    animation: none;
+  }
+}

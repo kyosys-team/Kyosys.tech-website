@@ -1,0 +1,26 @@
+# Kyosys
+
+> Kyosys is a 3-person web and app development agency based in India. We design and build websites and mobile apps for small and growing businesses, and offer SEO, social media marketing, and video production. We reply to every enquiry within 24 hours.
+
+## Services
+
+- [Web Development](https://kyosys.com/services/web-development): Fast, modern business websites and web applications designed to turn visitors into enquiries. Includes mobile-responsive design, contact forms, WhatsApp integration, and basic SEO.
+- [Mobile App Development](https://kyosys.com/services/app-development): iOS and Android apps built from a single codebase — from MVPs to full-featured apps with logins, push notifications, payments, and store publishing.
+- [Social Media Marketing](https://kyosys.com/services/social-media-marketing): Monthly content calendars, designed posts and reels, caption writing, ad campaign management, and growth reports for Instagram, Facebook, LinkedIn, and YouTube.
+- [Search Engine Optimization](https://kyosys.com/services/seo): Technical SEO audits, keyword research, on-page optimization, Google Business Profile setup, local citations, and monthly SEO articles with ranking reports.
+- [Video Production](https://kyosys.com/services/video-production): On-location and studio shoots plus professional editing for reels, ads, product videos, testimonials, and brand films.
+- [All services](https://kyosys.com/services): Overview of everything Kyosys offers.
+
+## About
+
+- [About Kyosys](https://kyosys.com/about): Who we are — two developers and one tester — how we work, and what we value.
+
+## Content
+
+- [Blog](https://kyosys.com/blog): Practical articles on websites, apps, SEO, and marketing for business owners.
+- [Work](https://kyosys.com/work): Selected client projects and case studies, added as real work ships.
+
+## Contact
+
+- [Contact](https://kyosys.com/contact): Send a message about your project. We reply within 24 hours with honest advice — no pushy sales talk.
+- [Get a quote](https://kyosys.com/quote): 3-step project estimator that gives an instant rough estimate. No email required to see it.
