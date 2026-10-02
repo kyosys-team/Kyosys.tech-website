@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { db, isDbConfigured } from "@/lib/db";
 import { requireAdminApi } from "@/lib/require-admin";
 import { testimonialSchema } from "@/lib/admin-validation";
+import { validationErrorResponse } from "@/lib/api-errors";
 
 export const dynamic = "force-dynamic";
 
@@ -30,12 +31,7 @@ export async function POST(req: NextRequest) {
   }
 
   const parsed = testimonialSchema.safeParse(body);
-  if (!parsed.success) {
-    return Response.json(
-      { error: "Validation failed", issues: parsed.error.flatten().fieldErrors },
-      { status: 400 }
-    );
-  }
+  if (!parsed.success) return validationErrorResponse(parsed.error);
 
   const created = await db.testimonial.create({
     data: { ...parsed.data, sample: false },

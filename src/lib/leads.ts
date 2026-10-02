@@ -15,15 +15,21 @@ export interface LeadRow {
   createdAt: Date;
 }
 
-export const LEAD_STATUSES: LeadStatus[] = ["NEW", "READ", "REPLIED", "CLOSED"];
-export const LEAD_TYPES: LeadType[] = ["contact", "quote"];
+/** Single source of truth for lead statuses/types — used by UI pickers AND the
+ * API's zod enums, so adding a status only ever means editing one array. */
+export const LEAD_TYPES = ["contact", "quote"] as const;
+export const LEAD_STATUSES = ["NEW", "READ", "REPLIED", "CLOSED"] as const;
 
 export function parseLeadType(v: unknown): LeadType | "all" {
-  return v === "contact" || v === "quote" ? v : "all";
+  return (LEAD_TYPES as readonly string[]).includes(v as string)
+    ? (v as LeadType)
+    : "all";
 }
 
 export function parseLeadStatus(v: unknown): LeadStatus | "all" {
-  return LEAD_STATUSES.includes(v as LeadStatus) ? (v as LeadStatus) : "all";
+  return (LEAD_STATUSES as readonly string[]).includes(v as string)
+    ? (v as LeadStatus)
+    : "all";
 }
 
 export function formatINR(n: number): string {

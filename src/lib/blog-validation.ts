@@ -79,12 +79,5 @@ export function slugify(value: string): string {
     .slice(0, 120);
 }
 
-/** Shape for API validation-failure responses. */
-export function validationErrorResponse(issues: z.core.$ZodIssue[]) {
-  const fields: Record<string, string> = {};
-  for (const issue of issues) {
-    const key = issue.path.join(".") || "_form";
-    if (!fields[key]) fields[key] = issue.message;
-  }
-  return Response.json({ error: "Validation failed", fields }, { status: 400 });
-}
+// Validation-error responses use the single shared helper in "@/lib/api-errors"
+// (same { error, fields } envelope as every other route).

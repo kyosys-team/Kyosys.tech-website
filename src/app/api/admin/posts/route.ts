@@ -1,10 +1,7 @@
 import { db, isDbConfigured } from "@/lib/db";
 import { requireAdmin } from "@/lib/require-admin";
-import {
-  createPostSchema,
-  postStatuses,
-  validationErrorResponse,
-} from "@/lib/blog-validation";
+import { createPostSchema, postStatuses } from "@/lib/blog-validation";
+import { validationErrorResponse } from "@/lib/api-errors";
 
 async function slugTaken(slug: string, excludeId?: string): Promise<boolean> {
   const existing = await db.post.findUnique({
@@ -44,7 +41,7 @@ export async function POST(req: Request) {
 
   const body = await req.json().catch(() => null);
   const parsed = createPostSchema.safeParse(body);
-  if (!parsed.success) return validationErrorResponse(parsed.error.issues);
+  if (!parsed.success) return validationErrorResponse(parsed.error);
 
   const data = parsed.data;
   if (await slugTaken(data.slug)) {

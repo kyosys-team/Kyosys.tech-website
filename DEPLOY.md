@@ -27,12 +27,12 @@ git push -u origin dev
 
 1. Sign up at **neon.tech** → **Create project** (region: closest to India, e.g. Singapore).
 2. Copy the **connection string** (it looks like `postgresql://user:pass@ep-xxx.ap-southeast-1.aws.neon.tech/kyosys?sslmode=require`).
-3. On your machine, with the connection string in `.env` as `DATABASE_URL`:
+3. On your machine, with the connection string in `.env.local` as `DATABASE_URL`:
    ```bash
    npx prisma migrate deploy   # applies prisma/migrations/20260928_sprint2_init (all 7 tables)
    npx prisma db seed           # admin user + categories (+ explicitly-marked SAMPLE testimonials)
    ```
-   The seed reads `ADMIN_EMAIL` / `ADMIN_PASSWORD_HASH` from `.env` — set them first
+   The seed reads `ADMIN_EMAIL` / `ADMIN_PASSWORD_HASH` from `.env.local` — set them first
    (see `.env.example`). **The seed never handles a raw password:** generate the
    bcrypt hash locally first (cost 12):
    ```bash

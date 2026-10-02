@@ -3,6 +3,7 @@ import { Prisma } from "@prisma/client";
 import { db, isDbConfigured } from "@/lib/db";
 import { requireAdminApi } from "@/lib/require-admin";
 import { caseStudySchema } from "@/lib/admin-validation";
+import { validationErrorResponse } from "@/lib/api-errors";
 
 export const dynamic = "force-dynamic";
 
@@ -38,12 +39,7 @@ export async function PATCH(
   }
 
   const parsed = caseStudySchema.safeParse(body);
-  if (!parsed.success) {
-    return Response.json(
-      { error: "Validation failed", issues: parsed.error.flatten().fieldErrors },
-      { status: 400 }
-    );
-  }
+  if (!parsed.success) return validationErrorResponse(parsed.error);
 
   const current = await db.caseStudy.findUnique({ where: { id: params.id } });
   if (!current) return Response.json({ error: "Not found" }, { status: 404 });

@@ -9,14 +9,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { CaseStudyEditor, type TiptapDoc } from "@/components/admin/CaseStudyEditor";
-
-export const SERVICE_OPTIONS = [
-  { slug: "web-development", name: "Web Development" },
-  { slug: "app-development", name: "Mobile App Development" },
-  { slug: "social-media-marketing", name: "Social Media Marketing" },
-  { slug: "seo", name: "Search Engine Optimization" },
-  { slug: "video-production", name: "Video Production" },
-] as const;
+import { slugify } from "@/lib/blog-validation";
+import { serviceOptions } from "@/lib/services";
 
 export interface CaseStudyFormData {
   id?: string;
@@ -48,16 +42,6 @@ const empty: CaseStudyFormData = {
   seoTitle: "",
   seoDescription: "",
 };
-
-function slugify(title: string): string {
-  return title
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9\s-]/g, "")
-    .replace(/[\s_]+/g, "-")
-    .replace(/-+/g, "-")
-    .replace(/^-|-$/g, "");
-}
 
 function FieldLabel({ htmlFor, children }: { htmlFor: string; children: React.ReactNode }) {
   return (
@@ -114,9 +98,9 @@ export function CaseStudyForm({ initial }: { initial?: CaseStudyFormData }) {
       );
       const json = await res.json().catch(() => ({}));
       if (!res.ok) {
-        const detail = json.issues
-          ? Object.entries(json.issues)
-              .map(([k, v]) => `${k}: ${(v as string[]).join(", ")}`)
+        const detail = json.fields
+          ? Object.entries(json.fields)
+              .map(([k, v]) => `${k}: ${v}`)
               .join(" · ")
           : json.error;
         throw new Error(detail || "Save failed");
@@ -173,7 +157,7 @@ export function CaseStudyForm({ initial }: { initial?: CaseStudyFormData }) {
       <div>
         <span className="mb-1.5 block text-sm font-medium text-slate-700">Services involved</span>
         <div className="flex flex-wrap gap-2">
-          {SERVICE_OPTIONS.map((s) => (
+          {serviceOptions.map((s) => (
             <label
               key={s.slug}
               className={`flex cursor-pointer items-center gap-2 rounded-full border px-3.5 py-2 text-sm font-medium transition-colors ${

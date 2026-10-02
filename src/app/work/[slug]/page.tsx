@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Container, EditorialHeader } from "@/components/ui/section";
@@ -8,7 +9,7 @@ import { CtaBand } from "@/components/marketing/CtaBand";
 import { Prose } from "@/components/blog/Prose";
 import { db, isDbConfigured } from "@/lib/db";
 import { siteConfig } from "@/lib/site";
-import { SERVICE_OPTIONS } from "@/components/admin/CaseStudyForm";
+import { serviceOptions } from "@/lib/services";
 
 export const revalidate = 60;
 export const dynamicParams = true;
@@ -27,7 +28,7 @@ function parseResults(raw: unknown): ResultPair[] {
 }
 
 function serviceName(slug: string): string {
-  return SERVICE_OPTIONS.find((s) => s.slug === slug)?.name ?? slug;
+  return serviceOptions.find((s) => s.slug === slug)?.name ?? slug;
 }
 
 async function getCaseStudy(slug: string) {
@@ -120,9 +121,12 @@ export default async function CaseStudyPage({ params }: { params: { slug: string
 
           {study.coverImage && (
             <Reveal className="mt-8 sm:mt-10">
-              <img
+              <Image
                 src={study.coverImage}
                 alt=""
+                width={1280}
+                height={720}
+                sizes="(max-width: 1024px) 100vw, 1024px"
                 className="aspect-[16/9] w-full rounded-3xl object-cover"
               />
             </Reveal>

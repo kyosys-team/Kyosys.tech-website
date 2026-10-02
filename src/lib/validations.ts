@@ -123,12 +123,8 @@ export const quoteSchema = z.object({
 
 export type QuoteFormData = z.infer<typeof quoteSchema>;
 
-/** Shape of an API validation-failure response. */
-export function zodFieldErrors(err: z.ZodError): Record<string, string> {
-  const fields: Record<string, string> = {};
-  for (const issue of err.issues) {
-    const key = issue.path.join(".") || "_";
-    if (!(key in fields)) fields[key] = issue.message;
-  }
-  return fields;
-}
+/**
+ * Shape of an API validation-failure response — re-exported from the single
+ * shared helper so the public and admin routes stay identical.
+ */
+export { zodFieldErrors } from "@/lib/api-errors";

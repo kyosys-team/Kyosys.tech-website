@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { Container, EditorialHeader } from "@/components/ui/section";
@@ -91,12 +92,13 @@ export default async function WorkPage() {
                     className="group block overflow-hidden rounded-3xl border border-ink/10 bg-white/60 transition-shadow duration-300 hover:shadow-xl"
                   >
                     {s.coverImage ? (
-                      <div className="aspect-[16/9] overflow-hidden bg-mist">
-                        <img
+                      <div className="relative aspect-[16/9] overflow-hidden bg-mist">
+                        <Image
                           src={s.coverImage}
-                          alt=""
-                          loading="lazy"
-                          className="size-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                          alt={s.title}
+                          fill
+                          sizes="(max-width: 768px) 100vw, 50vw"
+                          className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                         />
                       </div>
                     ) : (

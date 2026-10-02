@@ -22,14 +22,9 @@ type ConsentCheckboxProps = {
  * `name="consent"` so the value posts as part of the form body, and shows
  * a validation error when the parent passes one.
  *
- * Server side, pair this with `assertConsent` from "@/lib/consent":
- *
- * ```ts
- * import { assertConsent } from "@/lib/consent";
- * // inside the route handler, before processing the body:
- * const err = assertConsent(body);
- * if (err) return Response.json({ error: err }, { status: 400 });
- * ```
+ * The required consent value is enforced server-side by the shared schemas in
+ * "@/lib/validations" (`contactSchema` / `quoteSchema` both require
+ * `consent === true`), so no separate server-side check is needed.
  */
 export function ConsentCheckbox({
   checked,

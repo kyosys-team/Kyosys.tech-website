@@ -1,11 +1,11 @@
 import { z } from "zod";
 import { db, isDbConfigured } from "@/lib/db";
 import { requireAdminApi } from "@/lib/require-admin";
-import { LEAD_STATUSES } from "@/lib/leads";
+import { LEAD_STATUSES, LEAD_TYPES } from "@/lib/leads";
 
 const patchSchema = z.object({
-  type: z.enum(["contact", "quote"]),
-  status: z.enum(["NEW", "READ", "REPLIED", "CLOSED"]),
+  type: z.enum(LEAD_TYPES),
+  status: z.enum(LEAD_STATUSES),
 });
 
 /** PATCH /api/admin/leads/:id — { type, status } → updates the lead status. */

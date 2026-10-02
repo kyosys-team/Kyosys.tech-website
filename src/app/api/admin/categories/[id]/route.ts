@@ -1,6 +1,7 @@
 import { db, isDbConfigured } from "@/lib/db";
 import { requireAdmin } from "@/lib/require-admin";
-import { updateCategorySchema, validationErrorResponse } from "@/lib/blog-validation";
+import { updateCategorySchema } from "@/lib/blog-validation";
+import { validationErrorResponse } from "@/lib/api-errors";
 
 export async function PATCH(req: Request, { params }: { params: { id: string } }) {
   const user = await requireAdmin();
@@ -13,7 +14,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
 
   const body = await req.json().catch(() => null);
   const parsed = updateCategorySchema.safeParse(body);
-  if (!parsed.success) return validationErrorResponse(parsed.error.issues);
+  if (!parsed.success) return validationErrorResponse(parsed.error);
 
   const { name, slug } = parsed.data;
   if (name || slug) {

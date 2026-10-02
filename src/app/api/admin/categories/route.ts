@@ -1,6 +1,7 @@
 import { db, isDbConfigured } from "@/lib/db";
 import { requireAdmin } from "@/lib/require-admin";
-import { categorySchema, validationErrorResponse } from "@/lib/blog-validation";
+import { categorySchema } from "@/lib/blog-validation";
+import { validationErrorResponse } from "@/lib/api-errors";
 
 export async function GET() {
   const user = await requireAdmin();
@@ -23,7 +24,7 @@ export async function POST(req: Request) {
 
   const body = await req.json().catch(() => null);
   const parsed = categorySchema.safeParse(body);
-  if (!parsed.success) return validationErrorResponse(parsed.error.issues);
+  if (!parsed.success) return validationErrorResponse(parsed.error);
 
   const { name, slug } = parsed.data;
   const taken = await db.category.findFirst({

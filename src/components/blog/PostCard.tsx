@@ -69,7 +69,7 @@ export function PostCard({ post }: { post: BlogCardPost }) {
             read
           </span>
           <ArrowUpRight
-            className="size-4 text-brand-600 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+            className="size-4 text-brand-500 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
             aria-hidden="true"
           />
         </div>

@@ -1,6 +1,7 @@
 import { db, isDbConfigured } from "@/lib/db";
 import { requireAdmin } from "@/lib/require-admin";
-import { updatePostSchema, validationErrorResponse } from "@/lib/blog-validation";
+import { updatePostSchema } from "@/lib/blog-validation";
+import { validationErrorResponse } from "@/lib/api-errors";
 
 async function slugTaken(slug: string, excludeId: string): Promise<boolean> {
   const existing = await db.post.findUnique({
@@ -35,7 +36,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
 
   const body = await req.json().catch(() => null);
   const parsed = updatePostSchema.safeParse(body);
-  if (!parsed.success) return validationErrorResponse(parsed.error.issues);
+  if (!parsed.success) return validationErrorResponse(parsed.error);
 
   const data = parsed.data;
   if (data.slug && (await slugTaken(data.slug, params.id))) {

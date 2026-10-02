@@ -348,3 +348,12 @@ export function getRelatedServices(slug: string, count = 3): Service[] {
 }
 
 export const serviceSlugs = services.map((s) => s.slug);
+
+/**
+ * Slug + display name for every service, in catalogue order.
+ *
+ * Shared by the admin case-study picker and the public case-study tag chips so
+ * both surfaces read ONE source of truth (the `services` array above) instead
+ * of each keeping its own copy of the names.
+ */
+export const serviceOptions = services.map((s) => ({ slug: s.slug, name: s.name }));

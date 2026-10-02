@@ -54,9 +54,9 @@ export function TestimonialForm({ initial }: { initial?: TestimonialFormData }) 
       );
       const json = await res.json().catch(() => ({}));
       if (!res.ok) {
-        const detail = json.issues
-          ? Object.entries(json.issues)
-              .map(([k, v]) => `${k}: ${(v as string[]).join(", ")}`)
+        const detail = json.fields
+          ? Object.entries(json.fields)
+              .map(([k, v]) => `${k}: ${v}`)
               .join(" · ")
           : json.error;
         throw new Error(detail || "Save failed");
