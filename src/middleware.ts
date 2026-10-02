@@ -1,21 +1,26 @@
-import NextAuth from "next-auth";
 import { NextResponse } from "next/server";
-import { authConfig } from "@/lib/auth.config";
+import type { NextRequest } from "next/server";
 
-const { auth } = NextAuth(authConfig);
+/**
+ * Lightweight gate: no imports from next-auth or @/lib/auth, so the edge
+ * bundle stays tiny. It only checks that a session cookie exists.
+ * The real validation happens in app/admin/(protected)/layout.tsx and in
+ * every admin API route / server action.
+ */
+export function middleware(req: NextRequest) {
+  if (req.nextUrl.pathname === "/admin/login") return NextResponse.next();
 
-export default auth((req) => {
-  const { pathname } = req.nextUrl;
+  const hasSession =
+    req.cookies.has("authjs.session-token") ||
+    req.cookies.has("__Secure-authjs.session-token");
 
-  if (pathname === "/admin/login") return NextResponse.next();
-
-  if (req.auth?.user) return NextResponse.next();
+  if (hasSession) return NextResponse.next();
 
   const url = req.nextUrl.clone();
   url.pathname = "/admin/login";
   url.search = "";
   return NextResponse.redirect(url);
-});
+}
 
 export const config = {
   matcher: ["/admin/:path*"],

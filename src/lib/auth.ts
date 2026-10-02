@@ -3,7 +3,6 @@ import type { DefaultSession } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { z } from "zod";
 import { rateLimit, clientIp } from "@/lib/rate-limit";
-import { authConfig } from "./auth.config";
 
 declare module "next-auth" {
   interface Session {
@@ -21,7 +20,6 @@ export class RateLimitedSignin extends CredentialsSignin {
 }
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  ...authConfig,
   providers: [
     Credentials({
       authorize: async (creds, request) => {
@@ -51,4 +49,18 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
     }),
   ],
+  session: { strategy: "jwt", maxAge: 12 * 60 * 60 },
+  pages: { signIn: "/admin/login" },
+  trustHost: true,
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user?.id) (token as unknown as { id?: string }).id = user.id;
+      return token;
+    },
+    async session({ session, token }) {
+      const id = (token as unknown as { id?: string }).id;
+      if (id) session.user.id = id;
+      return session;
+    },
+  },
 });
