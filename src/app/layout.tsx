@@ -6,6 +6,7 @@ import { Navbar } from "@/components/marketing/Navbar";
 import { AnnouncementBar } from "@/components/marketing/AnnouncementBar";
 import { Footer } from "@/components/marketing/Footer";
 import { FloatingCluster } from "@/components/marketing/FloatingCluster";
+import { SiteChrome } from "@/components/marketing/SiteChrome";
 import { Cursor } from "@/components/motion/Cursor";
 import { siteConfig } from "@/lib/site";
 
@@ -88,11 +89,15 @@ export default function RootLayout({
         >
           Skip to content
         </a>
-        <AnnouncementBar />
-        <Navbar />
+        <SiteChrome>
+          <AnnouncementBar />
+          <Navbar />
+        </SiteChrome>
         <main id="main-content">{children}</main>
-        <Footer />
-        <FloatingCluster />
+        <SiteChrome>
+          <Footer />
+          <FloatingCluster />
+        </SiteChrome>
         <Cursor />
         <Toaster position="top-right" richColors closeButton />
       </body>
