@@ -47,6 +47,10 @@ function ContactForm() {
     formState: { errors },
   } = useForm<ContactFormData>({
     resolver: zodResolver(contactSchema),
+    // Validate on blur (not on load, not on every keystroke): errors appear
+    // once the user has interacted with a field, never on a pristine form.
+    // Matches the quote wizard's behavior.
+    mode: "onBlur",
     defaultValues: {
       name: searchParams.get("name") ?? "",
       email: "",

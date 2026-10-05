@@ -7,9 +7,10 @@ export interface ProcessStep {
 }
 
 /**
- * Editorial process timeline — oversized numerals, each under its own
- * hairline segment (segments read as one continuous rule on desktop).
- * Vertical rail on mobile.
+ * Editorial process timeline — the four steps read as ONE continuous flow:
+ * each step is a distinct card, and a spine line runs through the numbered
+ * badges (vertical on mobile, horizontal on desktop) so the sequence is
+ * unmistakable at every breakpoint.
  */
 export function ProcessTimeline({
   steps,
@@ -19,34 +20,45 @@ export function ProcessTimeline({
   dark?: boolean;
 }) {
   return (
-    <ol className="mt-12 grid gap-10 sm:grid-cols-2 sm:gap-x-8 lg:grid-cols-4">
+    <ol className="relative mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
+      {/* connecting spine — vertical on mobile, horizontal on desktop */}
+      <span
+        aria-hidden="true"
+        className={cn(
+          "absolute bottom-10 left-10 top-10 w-px lg:hidden",
+          dark ? "bg-white/20" : "bg-brand-700/25"
+        )}
+      />
+      <span
+        aria-hidden="true"
+        className={cn(
+          "absolute left-10 right-10 top-10 hidden h-px lg:block",
+          dark ? "bg-white/20" : "bg-brand-700/25"
+        )}
+      />
       {steps.map((st, i) => (
-        <Reveal key={st.title} delay={i * 90}>
+        <Reveal key={st.title} delay={i * 90} className="h-full">
           <li
             className={cn(
-              "relative border-t-2 pt-6 transition-transform duration-500 ease-out hover:-translate-y-1",
-              dark ? "border-white/20" : "border-ink/20"
+              "relative h-full rounded-2xl border p-6 pl-16 transition-all duration-500 ease-out hover:-translate-y-1 lg:pl-6 lg:pt-16",
+              dark
+                ? "border-white/15 bg-white/[0.04] hover:border-white/25"
+                : "border-ink/10 bg-white shadow-[0_1px_2px_rgb(15_23_42/0.06)] hover:shadow-xl hover:shadow-brand-950/[0.07]"
             )}
           >
+            {/* numbered badge — sits on the spine */}
             <span
               aria-hidden="true"
               className={cn(
-                "absolute -top-[2px] left-0 h-[2px] w-10",
-                dark ? "bg-sun-400" : "bg-brand-700"
-              )}
-            />
-            <p
-              aria-hidden="true"
-              className={cn(
-                "font-display text-6xl font-extrabold tabular-nums tracking-tight sm:text-7xl",
-                dark ? "text-paper/95" : "text-brand-900"
+                "absolute left-5 top-5 flex size-10 items-center justify-center rounded-full font-display text-sm font-extrabold tabular-nums",
+                dark ? "bg-sun-400 text-brand-950" : "bg-brand-700 text-white"
               )}
             >
               {String(i + 1).padStart(2, "0")}
-            </p>
+            </span>
             <h3
               className={cn(
-                "mt-4 font-display text-xl font-bold",
+                "font-display text-xl font-bold tracking-tight",
                 dark ? "text-paper" : "text-brand-900"
               )}
             >
@@ -54,7 +66,7 @@ export function ProcessTimeline({
             </h3>
             <p
               className={cn(
-                "mt-2 max-w-xs text-[15px] leading-relaxed",
+                "mt-2 text-[15px] leading-relaxed",
                 dark ? "text-white/70" : "text-ink-soft"
               )}
             >
