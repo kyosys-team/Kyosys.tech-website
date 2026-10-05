@@ -119,7 +119,7 @@ export default async function HomePage() {
         scrollCue
         kicker={
           <>
-            00 <span aria-hidden="true" className="mx-1">—</span> Web · Apps · Marketing
+            Web · Apps · Marketing
           </>
         }
         title={
@@ -266,7 +266,7 @@ export default async function HomePage() {
             />
           </Reveal>
           <Reveal delay={100}>
-            <p className="mt-10 max-w-4xl font-display text-[clamp(1.9rem,4.2vw,3.5rem)] font-extrabold leading-[1.08] tracking-tight">
+            <p className="mt-10 max-w-4xl font-display text-[clamp(1.45rem,4.2vw,3.5rem)] font-extrabold leading-[1.18] tracking-tight sm:leading-[1.08]">
               Most agencies sell you <span className="marker text-brand-950">hours</span> and
               hand you <span className="marker text-brand-950">jargon</span>. We sell
               you <span className="marker text-brand-950">outcomes</span> — in plain
